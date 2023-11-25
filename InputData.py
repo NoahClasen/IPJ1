@@ -264,7 +264,7 @@ plt.show()
 
 ## Plotly daily production and consumption 2030
 
-verbrauch2030df = verbrauch2030df[verbrauch2030df[DATE] == selected_date]
+selected_consumption2030df = verbrauch2030df[verbrauch2030df[DATE] == selected_date]
 scaled_selected_production_df = scaled_selected_production_df[scaled_selected_production_df[DATE] == selected_date]
 
 fig = make_subplots()
@@ -272,8 +272,8 @@ fig = make_subplots()
 # Add the energy consumption trace
 fig.add_trace(
     go.Scatter(
-        x=verbrauch2030df[STARTTIME].dt.strftime('%H:%M'),
-        y=verbrauch2030df['Verbrauch [MWh]'],
+        x=selected_consumption2030df[STARTTIME].dt.strftime('%H:%M'),
+        y=selected_consumption2030df['Verbrauch [MWh]'],
         mode='lines',
         name='Total Consumption',
         fill='tozeroy'
