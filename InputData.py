@@ -302,7 +302,7 @@ fig.show()
 
 # code to do 2030 quarter hours
 total_scaled_renewable_production = scaled_production_df[columns_to_clean].sum(axis=1)
-total_consumption = verbrauch2030df[CONSUMPTION]
+total_consumption = verbrauch2030df['Verbrauch [MWh]']
 
 # Berechnung der prozentualen Anteile der erneuerbaren Energieerzeugung am Gesamtverbrauch
 percent_renewable = total_scaled_renewable_production / total_consumption * 100
