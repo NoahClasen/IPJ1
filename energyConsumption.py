@@ -2,16 +2,14 @@
 # name: energyConsumption
 # date: 17.11.2023
 # laste change: 17.11.2023
-# author: Bjarne Wolf und Noah Clasen
+# author: Noah Clasen
 # use: calculate forecast till 2023
+# test Bjarne
 # -----------------------------------------
 
 # import
 import pandas as pd
-import numpy as np
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import streamlit as st
+
 
 # Funktion
 def energyConsumption(consumption_df):
@@ -22,17 +20,19 @@ def energyConsumption(consumption_df):
     print('\n', 'eMobilitätHochrechnung2030', f"{eMobilitätHochrechnung2030:,.0f}".replace(",", "."))
 
     verbrauch2022df = consumption_df[consumption_df['Datum'].dt.year == 2022]
-    prognoseVerbrauch2030df = verbrauch2022df.copy()
-    prognoseVerbrauch2030df['Datum'] = prognoseVerbrauch2030df['Datum'].map(lambda x: x.replace(year=2030))
+    prognose2030df = verbrauch2022df.copy()
     faktor = faktorRechnung(verbrauch2022df, wärmepumpeHochrechnung2030, eMobilitätHochrechnung2030)
+    print(faktor)
+    # Change the year in 'Datum' column to 2030
+    prognose2030df['Datum'] = prognose2030df['Datum'].map(lambda x: x.replace(year=2030))
 
-    prognoseVerbrauch2030df['Gesamt (Netzlast) [kWh] Originalauflösungen'] = prognoseVerbrauch2030df['Gesamt (Netzlast) [MWh] Originalauflösungen'] * faktor * 1000
+    prognose2030df['Verbrauch [MWh]'] = prognose2030df['Gesamt (Netzlast) [MWh] Originalauflösungen'] * faktor
 
-    print("2022:")
-    print(verbrauch2022df)
-    print("\n 2030: (Faktor: " + str(faktor) + ")")
-    print(prognoseVerbrauch2030df[['Datum', 'Gesamt (Netzlast) [kWh] Originalauflösungen']])
-    return prognoseVerbrauch2030df
+    combined_df = pd.concat([verbrauch2022df[['Anfang', 'Gesamt (Netzlast) [MWh] Originalauflösungen']], prognose2030df[['Verbrauch [MWh]']]], axis=1)
+    print(combined_df[['Gesamt (Netzlast) [MWh] Originalauflösungen', 'Verbrauch [MWh]']])
+
+    return prognose2030df
+
 
 def wärmepumpe():
     wärmepumpeAnzahl2030 = 500000 * (2030 - 2023)  # 500k pro Jahr bis 2023
@@ -83,7 +83,7 @@ def faktorRechnung(verbrauch2022df, wärmepumpeHochrechnung2030, eMobilitätHoch
 
 
 def prognoseRechnung(verbrauch2022df, faktor):
-    verbrauch2030df = verbrauch2022df['Gesamt (Netzlast) [MWh] Originalauflösungen'] * faktor
+    verbrauch2030df = verbrauch2022df['Verbrauch [kWh]'] * faktor
     return verbrauch2030df
 
 
