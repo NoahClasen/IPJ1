@@ -96,8 +96,7 @@ print("Duration of the program: ", round(duration, 2))
 # Berechnung der prozentualen Anteile der erneuerbaren Energieerzeugung am Gesamtverbrauch
 percent_renewable = total_renewable_production / total_consumption * 100
 
-counts, intervals = np.histogram(percent_renewable, bins=np.arange(0, 111,
-                                                                   1))  # Use NumPy to calculate the histogram of the percentage distribution
+counts, intervals = np.histogram(percent_renewable, bins=np.arange(0, 111, 1))  # Use NumPy to calculate the histogram of the percentage distribution
 
 x = intervals[:-1]  # Define the x-axis values as the bin edges
 labels = [f'{i}%' for i in range(0, 111, 1)]  # Create labels for x-axis ticks (von 0 bis 111 in Einzelnschritten)
@@ -151,6 +150,7 @@ fig.update_layout(
 fig.show()
 # st.plotly_chart(fig)
 
+#---------------------------------------------------------------------------------------------------------------------
 # code to make 2030 prediction
 # 2030 prediction
 
@@ -327,3 +327,42 @@ fig.show()
 print("soviele VS sind in scaled_production_df:")
 print(len(scaled_selected_production_df))
 print("Viertelstunden aus 2030 expected 35040 hier: ")
+
+
+
+
+# Berechnen Sie den prozentualen Anteil der erneuerbaren Energieerzeugung am Verbrauch
+prozentualerAnteil = total_scaled_renewable_production / verbrauch2030df['Verbrauch [MWh]'] * 100
+print(percent_renewable)
+
+# Initialisieren Sie eine Liste für die Datensätze
+data = []
+
+# Iterieren Sie über die Prozentsätze von 0 bis 100
+for i in range(301):
+    # Zählen Sie die Viertelstunden über oder gleich dem Prozentsatz
+    anzahlViertelstundenProzent = len(percent_renewable[percent_renewable >= i])
+
+    # Fügen Sie einen Datensatz zum Speichern in die Liste hinzu
+    data.append({'Prozentsatz': i, 'Anzahl_Viertelstunden': anzahlViertelstundenProzent})
+
+# Erstellen Sie ein DataFrame aus der Liste
+result_df = pd.DataFrame(data)
+
+# Drucken Sie das erstellte DataFrame
+print(result_df)
+
+fig = go.Figure()
+
+# Fügen Sie einen Balken für die Anzahl der Viertelstunden für jeden Prozentsatz hinzu
+fig.add_trace(go.Bar(x=result_df['Prozentsatz'], y=result_df['Anzahl_Viertelstunden']))
+
+# Aktualisieren Sie das Layout für Titel und Achsenbeschriftungen
+fig.update_layout(
+    title='Anzahl der Viertelstunden mit erneuerbarer Energieerzeugung über oder gleich dem Verbrauch',
+    xaxis=dict(title='Prozentsatz erneuerbarer Energie'),
+    yaxis=dict(title='Anzahl der Viertelstunden')
+)
+
+# Zeigen Sie den Plot an
+fig.show()
